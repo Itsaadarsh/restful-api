@@ -7,8 +7,11 @@ const express_1 = __importDefault(require("express"));
 const products_1 = __importDefault(require("./routes/products"));
 const order_1 = __importDefault(require("./routes/order"));
 const morgan_1 = __importDefault(require("morgan"));
+const body_parser_1 = __importDefault(require("body-parser"));
 const app = express_1.default();
 app.use(morgan_1.default('dev'));
+app.use(body_parser_1.default.urlencoded({ extended: false }));
+app.use(body_parser_1.default.json());
 app.use('/product', products_1.default);
 app.use('/orders', order_1.default);
 app.use((_req, _res, next) => {

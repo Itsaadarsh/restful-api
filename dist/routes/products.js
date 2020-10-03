@@ -10,10 +10,14 @@ router.get('/', (_req, res, _next) => {
         msg: 'GET Request',
     });
 });
-;
-router.post('/', (_req, res, _next) => {
+router.post('/', (req, res, _next) => {
+    const product = {
+        name: req.body.name,
+        price: +req.body.price,
+    };
     res.status(201).json({
         msg: 'POST Request',
+        product: product,
     });
 });
 router.get('/:prodId', (req, res, _next) => {

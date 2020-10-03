@@ -2,9 +2,12 @@ import express from 'express';
 import prodRouter from './routes/products';
 import orderRouter from './routes/order';
 import morgan from 'morgan';
+import bodyParser from 'body-parser';
 const app = express();
 
 app.use(morgan('dev'));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 app.use('/product', prodRouter);
 app.use('/orders', orderRouter);
 
