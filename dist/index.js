@@ -12,6 +12,16 @@ const app = express_1.default();
 app.use(morgan_1.default('dev'));
 app.use(body_parser_1.default.urlencoded({ extended: false }));
 app.use(body_parser_1.default.json());
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    if (req.method == 'OPTIONS') {
+        res.header('Access-Control-Allow-Methods', 'PUT,POST,DELETE,PATCH');
+        return res.status(200).json({});
+    }
+    next();
+    return;
+});
 app.use('/product', products_1.default);
 app.use('/orders', order_1.default);
 app.use((_req, _res, next) => {
