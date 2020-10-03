@@ -2,19 +2,19 @@ import express from 'express';
 
 const router = express.Router();
 
-router.get('/', (req, res, next) => {
+router.get('/', (_req, res, _next) => {
   res.status(200).json({
     msg: 'GET Request',
   });
 });
 
-router.post('/', (req, res, next) => {
+router.post('/', (_req, res, _next) => {
   res.status(201).json({
     msg: 'POST Request',
   });
 });
 
-router.get('/:prodId', (req, res, next) => {
+router.get('/:prodId', (req, res, _next) => {
   const prodID = req.params.prodId;
   res.status(200).json({
     msg: 'GET particular product',
@@ -22,7 +22,7 @@ router.get('/:prodId', (req, res, next) => {
   });
 });
 
-router.patch('/:prodId', (req, res, next) => {
+router.patch('/:prodId', (req, res, _next) => {
   const prodID = req.params.prodId;
   res.status(200).json({
     msg: 'UPDATE particular product',
@@ -30,7 +30,7 @@ router.patch('/:prodId', (req, res, next) => {
   });
 });
 
-router.delete('/:prodId', (req, res, next) => {
+router.delete('/:prodId', (req, res, _next) => {
   const prodID = req.params.prodId;
   res.status(200).json({
     msg: 'DELETE particular product',
