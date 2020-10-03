@@ -1,12 +1,8 @@
 import express from 'express';
+import prodRouter from './routes/products';
 const app = express();
 
-app.use((req, res, next) => {
-  res.json({
-    msg: "It's Working!",
-  });
-  next();
-});
+app.use('/product', prodRouter);
 
 app.listen(3000, () => {
   console.log('Listening at PORT 3000');
