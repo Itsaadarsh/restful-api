@@ -7,6 +7,7 @@ router.get('/', (_req, res, _next) => {
     msg: 'GET Request',
   });
 });
+});
 
 router.post('/', (_req, res, _next) => {
   res.status(201).json({

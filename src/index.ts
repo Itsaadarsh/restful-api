@@ -7,6 +7,13 @@ const app = express();
 app.use(morgan('dev'));
 app.use('/product', prodRouter);
 app.use('/orders', orderRouter);
+app.use((req, res, next) => {
+  const err = new Error('Not Found');
+  err.status = 404;
+  next(err);
+});
+
+app.use();
 
 app.listen(3000, () => {
   console.log('Listening at PORT 3000');
