@@ -64,10 +64,18 @@ router.get('/:prodId', (req, res, _next) => __awaiter(void 0, void 0, void 0, fu
 }));
 router.patch('/:prodId', (req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
     const prodID = req.params.prodId;
-    res.status(200).json({
-        msg: 'UPDATE particular product',
-        id: prodID,
-    });
+    try {
+        const updated = {};
+        for (let i of req.body) {
+            updated[i.method] = i.data;
+        }
+        const update = yield product_1.default.updateOne({ _id: prodID }, { $set: updated });
+        res.status(200).json(update);
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({ message: err.message, error: err });
+    }
 }));
 router.delete('/:prodId', (req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
     const prodID = req.params.prodId;

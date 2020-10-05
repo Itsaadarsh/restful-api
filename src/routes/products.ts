@@ -49,11 +49,17 @@ router.get('/:prodId', async (req, res, _next) => {
 
 router.patch('/:prodId', async (req, res, _next) => {
   const prodID = req.params.prodId;
-  res.status(200).json({
-    msg: 'UPDATE particular product',
-
-    id: prodID,
-  });
+  try {
+    const updated: any = {};
+    for (let i of req.body) {
+      updated[i.method] = i.data;
+    }
+    const update = await productModel.updateOne({ _id: prodID }, { $set: updated });
+    res.status(200).json(update);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: err.message, error: err });
+  }
 });
 
 router.delete('/:prodId', async (req, res, _next) => {
