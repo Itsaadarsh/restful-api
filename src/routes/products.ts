@@ -33,8 +33,8 @@ router.post('/', async (req, res, _next) => {
 });
 
 router.get('/:prodId', async (req, res, _next) => {
+  const prodID = req.params.prodId;
   try {
-    const prodID = req.params.prodId;
     const prod = await productModel.findById(prodID);
     if (prod) {
       res.status(200).json(prod);
@@ -58,7 +58,17 @@ router.patch('/:prodId', async (req, res, _next) => {
 
 router.delete('/:prodId', async (req, res, _next) => {
   const prodID = req.params.prodId;
-  res.status(200).json(prodID);
+  try {
+    const prod = await productModel.deleteOne({ _id: prodID });
+    if (prod.n == 1) {
+      res.status(200).json(prod);
+    } else {
+      res.status(404).json({ message: 'data not found' });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: err.message, error: err });
+  }
 });
 
 export default module.exports = router;
