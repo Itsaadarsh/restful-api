@@ -1,46 +1,64 @@
 import express from 'express';
-
+import Mongoose from 'mongoose';
+import productModel from '../models/product';
 const router = express.Router();
 
-router.get('/', (_req, res, _next) => {
-  res.status(200).json({
-    msg: 'GET Request',
-  });
+router.get('/', async (_req, res, _next) => {
+  try {
+    const prod = await productModel.find();
+    if (prod.length == 0) {
+      res.status(404).json({ message: 'data not found' });
+    } else {
+      res.status(200).json(prod);
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: err.message, error: err });
+  }
 });
 
-router.post('/', (req, res, _next) => {
-  const product = {
+router.post('/', async (req, res, _next) => {
+  const product = new productModel({
+    _id: new Mongoose.Types.ObjectId(),
     name: req.body.name,
     price: +req.body.price,
-  };
-  res.status(201).json({
-    msg: 'POST Request',
-    product: product,
   });
+  try {
+    const prod = await product.save();
+    res.status(201).json(prod);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: err.message, error: err });
+  }
 });
 
-router.get('/:prodId', (req, res, _next) => {
-  const prodID = req.params.prodId;
-  res.status(200).json({
-    msg: 'GET particular product',
-    id: prodID,
-  });
+router.get('/:prodId', async (req, res, _next) => {
+  try {
+    const prodID = req.params.prodId;
+    const prod = await productModel.findById(prodID);
+    if (prod) {
+      res.status(200).json(prod);
+    } else {
+      res.status(404).json({ message: 'data not found' });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: err.message, error: err });
+  }
 });
 
-router.patch('/:prodId', (req, res, _next) => {
+router.patch('/:prodId', async (req, res, _next) => {
   const prodID = req.params.prodId;
   res.status(200).json({
     msg: 'UPDATE particular product',
+
     id: prodID,
   });
 });
 
-router.delete('/:prodId', (req, res, _next) => {
+router.delete('/:prodId', async (req, res, _next) => {
   const prodID = req.params.prodId;
-  res.status(200).json({
-    msg: 'DELETE particular product',
-    id: prodID,
-  });
+  res.status(200).json(prodID);
 });
 
 export default module.exports = router;

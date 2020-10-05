@@ -2,13 +2,13 @@ import express from 'express';
 
 const router = express.Router();
 
-router.get('/', (_req, res, _next) => {
+router.get('/', async (_req, res, _next) => {
   res.status(200).json({
     msg: 'GET Request Order',
   });
 });
 
-router.post('/', (req, res, _next) => {
+router.post('/', async (req, res, _next) => {
   const order = {
     prodId: req.body.prodId,
     qty: +req.body.quantity,
@@ -19,7 +19,7 @@ router.post('/', (req, res, _next) => {
   });
 });
 
-router.get('/:orderID', (req, res, _next) => {
+router.get('/:orderID', async (req, res, _next) => {
   const orderID = req.params.orderID;
   res.status(200).json({
     msg: 'GET particular order',
@@ -27,7 +27,7 @@ router.get('/:orderID', (req, res, _next) => {
   });
 });
 
-router.delete('/:orderID', (req, res, _next) => {
+router.delete('/:orderID', async (req, res, _next) => {
   const orderID = req.params.orderID;
   res.status(200).json({
     msg: 'DELETE particular order',

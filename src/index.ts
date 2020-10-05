@@ -4,11 +4,12 @@ import orderRouter from './routes/order';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
+
 const app = express();
 
 mongoose.connect(
   `mongodb+srv://aadi:${process.env.MONGO_PWD}@cluster0.b7dxw.mongodb.net/restapi?retryWrites=true&w=majority`,
-  { useUnifiedTopology: true }
+  { useUnifiedTopology: true, useNewUrlParser: true }
 );
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
