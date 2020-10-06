@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.get('/', async (_req, res, _next) => {
   try {
-    const getOrder = await orderModel.find().select('prodId quantity _id');
+    const getOrder = await orderModel.find().select('_id quantity product').populate('product', 'name');
     if (getOrder.length == 0) {
       res.status(404).json({ message: 'No data found' });
     } else {
@@ -23,11 +23,11 @@ router.get('/', async (_req, res, _next) => {
 
 router.post('/', async (req, res, _next) => {
   try {
-    const productID = await productModel.findById(req.body.prodId);
+    const productID = await productModel.findById(req.body.product);
     if (productID) {
       const order = new orderModel({
         _id: new mongoose.Types.ObjectId(),
-        prodId: productID._id,
+        product: productID._id,
         quantity: req.body.quantity,
       });
       const savedOrder = await order.save();
@@ -47,7 +47,7 @@ router.post('/', async (req, res, _next) => {
 router.get('/:orderID', async (req, res, _next) => {
   try {
     const orderID = req.params.orderID;
-    const foundOrder = await orderModel.findById(orderID).select('prodId quantity _id');
+    const foundOrder = await orderModel.findById(orderID).select('prodId quantity _id').populate('product');
     if (foundOrder) {
       res.status(200).json(foundOrder);
     } else {

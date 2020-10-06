@@ -19,7 +19,7 @@ const product_1 = __importDefault(require("../models/product"));
 const router = express_1.default.Router();
 router.get('/', (_req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const getOrder = yield orders_1.default.find().select('prodId quantity _id');
+        const getOrder = yield orders_1.default.find().select('_id quantity product').populate('product', 'name');
         if (getOrder.length == 0) {
             res.status(404).json({ message: 'No data found' });
         }
@@ -37,11 +37,11 @@ router.get('/', (_req, res, _next) => __awaiter(void 0, void 0, void 0, function
 }));
 router.post('/', (req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const productID = yield product_1.default.findById(req.body.prodId);
+        const productID = yield product_1.default.findById(req.body.product);
         if (productID) {
             const order = new orders_1.default({
                 _id: new mongoose_1.default.Types.ObjectId(),
-                prodId: productID._id,
+                product: productID._id,
                 quantity: req.body.quantity,
             });
             const savedOrder = yield order.save();
@@ -62,7 +62,7 @@ router.post('/', (req, res, _next) => __awaiter(void 0, void 0, void 0, function
 router.get('/:orderID', (req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const orderID = req.params.orderID;
-        const foundOrder = yield orders_1.default.findById(orderID).select('prodId quantity _id');
+        const foundOrder = yield orders_1.default.findById(orderID).select('prodId quantity _id').populate('product');
         if (foundOrder) {
             res.status(200).json(foundOrder);
         }
