@@ -18,15 +18,14 @@ const router = express_1.default.Router();
 const multer_1 = __importDefault(require("multer"));
 const storage = multer_1.default.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, './uploads/');
+        cb(null, 'public/');
     },
     filename: function (req, file, cb) {
-        const now = new Date().toISOString();
-        const date = now.replace(/:/g, '-');
-        cb(null, date + file.originalname);
+        const parts = file.mimetype.split('/');
+        cb(null, `${file.fieldname}-${Date.now()}.${parts[1]}`);
     },
 });
-const upload = multer_1.default({ storage: storage });
+const upload = multer_1.default({ storage });
 router.get('/', (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const prod = yield product_1.default.find().select('name price _id');

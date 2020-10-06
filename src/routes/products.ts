@@ -2,28 +2,19 @@ import express from 'express';
 import productModel from '../models/product';
 const router = express.Router();
 import multer from 'multer';
-
-// const storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, 'public');
-//   },
-//   filename: function (req, file, cb) {
-//     const parts = file.mimetype.split('/');
-//     cb(null, Date.now() + file.originalname + '.' + parts);
-//   },
-// });
+import mongoose from 'mongoose';
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, './uploads/');
+    cb(null, 'public/');
   },
   filename: function (req, file, cb) {
-    const now = new Date().toISOString();
-    const date = now.replace(/:/g, '-');
-    cb(null, date + file.originalname);
+    const parts = file.mimetype.split('/');
+    cb(null, `${file.fieldname}-${Date.now()}.${parts[1]}`);
   },
 });
-const upload = multer({ storage: storage });
+
+const upload = multer({ storage });
 
 router.get('/', async (_req, res) => {
   try {
@@ -44,9 +35,11 @@ router.get('/', async (_req, res) => {
 
 router.post('/', upload.single('prodImage'), async (req, res) => {
   res.sendFile(`${__dirname}/public/${req.file.filename}`);
+  // console.log(req.file);
+
   // try {
   //   const product = new productModel({
-  //     _id: new Mongoose.Types.ObjectId(),
+  //     _id: new mongoose.Types.ObjectId(),
   //     name: req.body.name,
   //     price: +req.body.price,
   //   });
