@@ -67,6 +67,8 @@ router.patch('/:prodId', (req, res, _next) => __awaiter(void 0, void 0, void 0, 
     try {
         const updated = {};
         for (let i of req.body) {
+            if (i.method == 'price') {
+            }
             updated[i.method] = i.data;
         }
         const update = yield product_1.default.updateOne({ _id: prodID }, { $set: updated });

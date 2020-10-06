@@ -52,6 +52,8 @@ router.patch('/:prodId', async (req, res, _next) => {
   try {
     const updated: any = {};
     for (let i of req.body) {
+      if (i.method == 'price') {
+      }
       updated[i.method] = i.data;
     }
     const update = await productModel.updateOne({ _id: prodID }, { $set: updated });
