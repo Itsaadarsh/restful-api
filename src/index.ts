@@ -7,14 +7,11 @@ import mongoose from 'mongoose';
 
 const app = express();
 
-mongoose.connect(
-  `mongodb+srv://aadi:${process.env.MONGO_PWD}@cluster0.b7dxw.mongodb.net/restapi?retryWrites=true&w=majority`,
-  { useUnifiedTopology: true, useNewUrlParser: true }
-);
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+// CORS Handling
 app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
@@ -48,6 +45,12 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
   });
 });
 
-app.listen(3000, () => {
+// Listening to PORT and Connecting to Data Base
+app.listen(3000, async () => {
+  await mongoose.connect(
+    `mongodb+srv://aadi:${process.env.MONGO_PWD}@cluster0.b7dxw.mongodb.net/restapi?retryWrites=true&w=majority`,
+    { useUnifiedTopology: true, useNewUrlParser: true }
+  );
+  console.log('Connected to Database');
   console.log('Listening at PORT 3000');
 });
