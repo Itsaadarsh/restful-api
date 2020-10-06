@@ -7,7 +7,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const orderSchema = new mongoose_1.default.Schema({
     _id: mongoose_1.default.Schema.Types.ObjectId,
     prodId: { type: mongoose_1.default.Schema.Types.ObjectId, required: true, ref: 'products' },
-    quantity: { type: Number, default: 1 },
+    quantity: { type: mongoose_1.default.Schema.Types.Number, default: 1 },
 });
 const orderModel = mongoose_1.default.model('orders', orderSchema);
 exports.default = module.exports = orderModel;
