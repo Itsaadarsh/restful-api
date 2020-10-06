@@ -5,11 +5,14 @@ const router = express.Router();
 
 router.get('/', async (_req, res, _next) => {
   try {
-    const prod = await productModel.find();
+    const prod = await productModel.find().select('name price _id');
     if (prod.length == 0) {
       res.status(404).json({ message: 'data not found' });
     } else {
-      res.status(200).json(prod);
+      res.status(200).json({
+        count: prod.length,
+        products: prod,
+      });
     }
   } catch (err) {
     console.log(err);
@@ -35,7 +38,7 @@ router.post('/', async (req, res, _next) => {
 router.get('/:prodId', async (req, res, _next) => {
   const prodID = req.params.prodId;
   try {
-    const prod = await productModel.findById(prodID);
+    const prod = await productModel.findById(prodID).select('name price _id');
     if (prod) {
       res.status(200).json(prod);
     } else {
@@ -56,8 +59,10 @@ router.patch('/:prodId', async (req, res, _next) => {
       }
       updated[i.method] = i.data;
     }
-    const update = await productModel.updateOne({ _id: prodID }, { $set: updated });
-    res.status(200).json(update);
+    await productModel.updateOne({ _id: prodID }, { $set: updated });
+    res.status(200).json({
+      message: `PRODUCT ${prodID} updated`,
+    });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: err.message, error: err });
@@ -69,7 +74,9 @@ router.delete('/:prodId', async (req, res, _next) => {
   try {
     const prod = await productModel.deleteOne({ _id: prodID });
     if (prod.n == 1) {
-      res.status(200).json(prod);
+      res.status(200).json({
+        message: `PRODUCT ${prodID} deleted`,
+      });
     } else {
       res.status(404).json({ message: 'data not found' });
     }

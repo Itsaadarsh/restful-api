@@ -18,12 +18,15 @@ const product_1 = __importDefault(require("../models/product"));
 const router = express_1.default.Router();
 router.get('/', (_req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const prod = yield product_1.default.find();
+        const prod = yield product_1.default.find().select('name price _id');
         if (prod.length == 0) {
             res.status(404).json({ message: 'data not found' });
         }
         else {
-            res.status(200).json(prod);
+            res.status(200).json({
+                count: prod.length,
+                products: prod,
+            });
         }
     }
     catch (err) {
@@ -49,7 +52,7 @@ router.post('/', (req, res, _next) => __awaiter(void 0, void 0, void 0, function
 router.get('/:prodId', (req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
     const prodID = req.params.prodId;
     try {
-        const prod = yield product_1.default.findById(prodID);
+        const prod = yield product_1.default.findById(prodID).select('name price _id');
         if (prod) {
             res.status(200).json(prod);
         }
@@ -71,8 +74,10 @@ router.patch('/:prodId', (req, res, _next) => __awaiter(void 0, void 0, void 0, 
             }
             updated[i.method] = i.data;
         }
-        const update = yield product_1.default.updateOne({ _id: prodID }, { $set: updated });
-        res.status(200).json(update);
+        yield product_1.default.updateOne({ _id: prodID }, { $set: updated });
+        res.status(200).json({
+            message: `PRODUCT ${prodID} updated`,
+        });
     }
     catch (err) {
         console.log(err);
@@ -84,7 +89,9 @@ router.delete('/:prodId', (req, res, _next) => __awaiter(void 0, void 0, void 0,
     try {
         const prod = yield product_1.default.deleteOne({ _id: prodID });
         if (prod.n == 1) {
-            res.status(200).json(prod);
+            res.status(200).json({
+                message: `PRODUCT ${prodID} deleted`,
+            });
         }
         else {
             res.status(404).json({ message: 'data not found' });
