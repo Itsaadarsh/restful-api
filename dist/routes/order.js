@@ -18,9 +18,22 @@ const orders_1 = __importDefault(require("../models/orders"));
 const product_1 = __importDefault(require("../models/product"));
 const router = express_1.default.Router();
 router.get('/', (_req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
-    res.status(200).json({
-        msg: 'GET Request Order',
-    });
+    try {
+        const getOrder = yield orders_1.default.find().select('prodId quantity _id');
+        if (getOrder.length == 0) {
+            res.status(404).json({ message: 'No data found' });
+        }
+        else {
+            res.status(200).json({
+                count: getOrder.length,
+                orders: getOrder,
+            });
+        }
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({ message: err.message, error: err });
+    }
 }));
 router.post('/', (req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
     const productID = yield product_1.default.findById(req.body.prodId);

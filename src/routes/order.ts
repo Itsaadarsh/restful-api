@@ -5,9 +5,20 @@ import productModel from '../models/product';
 const router = express.Router();
 
 router.get('/', async (_req, res, _next) => {
-  res.status(200).json({
-    msg: 'GET Request Order',
-  });
+  try {
+    const getOrder = await orderModel.find().select('prodId quantity _id');
+    if (getOrder.length == 0) {
+      res.status(404).json({ message: 'No data found' });
+    } else {
+      res.status(200).json({
+        count: getOrder.length,
+        orders: getOrder,
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: err.message, error: err });
+  }
 });
 
 router.post('/', async (req, res, _next) => {
