@@ -11,23 +11,25 @@ router.get('/', async (_req, res, _next) => {
 });
 
 router.post('/', async (req, res, _next) => {
-  try {
-    const order = new orderModel({
-      _id: new mongoose.Types.ObjectId(),
-      prodId: req.body.prodId,
-      quantity: +req.body.quantity,
-    });
-    const productID = await productModel.findById(req.body.prodId);
-    console.log(productID);
-
-    // const savedOrder = await order.save();
-    // res.status(201).json({
-    //   msg: 'Order saved',
-    //   order: savedOrder,
-    // });
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: err.message, error: err });
+  const productID = await productModel.findById(req.body.prodId);
+  if (productID) {
+    try {
+      const order = new orderModel({
+        _id: new mongoose.Types.ObjectId(),
+        prodId: productID._id,
+        quantity: req.body.quantity,
+      });
+      const savedOrder = await order.save();
+      res.status(201).json({
+        msg: 'Order saved',
+        order: savedOrder,
+      });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: err.message, error: err });
+    }
+  } else {
+    res.status(404).json({ message: 'Data not found' });
   }
 });
 

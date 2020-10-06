@@ -23,18 +23,27 @@ router.get('/', (_req, res, _next) => __awaiter(void 0, void 0, void 0, function
     });
 }));
 router.post('/', (req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const order = new orders_1.default({
-            _id: new mongoose_1.default.Types.ObjectId(),
-            prodId: req.body.prodId,
-            quantity: +req.body.quantity,
-        });
-        const productID = yield product_1.default.findById(req.body.prodId);
-        console.log(productID);
+    const productID = yield product_1.default.findById(req.body.prodId);
+    if (productID) {
+        try {
+            const order = new orders_1.default({
+                _id: new mongoose_1.default.Types.ObjectId(),
+                prodId: productID._id,
+                quantity: req.body.quantity,
+            });
+            const savedOrder = yield order.save();
+            res.status(201).json({
+                msg: 'Order saved',
+                order: savedOrder,
+            });
+        }
+        catch (err) {
+            console.log(err);
+            res.status(500).json({ message: err.message, error: err });
+        }
     }
-    catch (err) {
-        console.log(err);
-        res.status(500).json({ message: err.message, error: err });
+    else {
+        res.status(404).json({ message: 'Data not found' });
     }
 }));
 router.get('/:orderID', (req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
