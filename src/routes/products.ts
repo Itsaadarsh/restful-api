@@ -21,12 +21,12 @@ router.get('/', async (_req, res, _next) => {
 });
 
 router.post('/', async (req, res, _next) => {
-  const product = new productModel({
-    _id: new Mongoose.Types.ObjectId(),
-    name: req.body.name,
-    price: +req.body.price,
-  });
   try {
+    const product = new productModel({
+      _id: new Mongoose.Types.ObjectId(),
+      name: req.body.name,
+      price: +req.body.price,
+    });
     const prod = await product.save();
     res.status(201).json(prod);
   } catch (err) {

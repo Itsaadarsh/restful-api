@@ -13,6 +13,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const mongoose_1 = __importDefault(require("mongoose"));
+const orders_1 = __importDefault(require("../models/orders"));
+const product_1 = __importDefault(require("../models/product"));
 const router = express_1.default.Router();
 router.get('/', (_req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
     res.status(200).json({
@@ -20,14 +23,19 @@ router.get('/', (_req, res, _next) => __awaiter(void 0, void 0, void 0, function
     });
 }));
 router.post('/', (req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
-    const order = {
-        prodId: req.body.prodId,
-        qty: +req.body.quantity,
-    };
-    res.status(201).json({
-        msg: 'POST Request Order',
-        order: order,
-    });
+    try {
+        const order = new orders_1.default({
+            _id: new mongoose_1.default.Types.ObjectId(),
+            prodId: req.body.prodId,
+            quantity: +req.body.quantity,
+        });
+        const productID = yield product_1.default.findById(req.body.prodId);
+        console.log(productID);
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({ message: err.message, error: err });
+    }
 }));
 router.get('/:orderID', (req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
     const orderID = req.params.orderID;

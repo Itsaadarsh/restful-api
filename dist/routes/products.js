@@ -35,12 +35,12 @@ router.get('/', (_req, res, _next) => __awaiter(void 0, void 0, void 0, function
     }
 }));
 router.post('/', (req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
-    const product = new product_1.default({
-        _id: new mongoose_1.default.Types.ObjectId(),
-        name: req.body.name,
-        price: +req.body.price,
-    });
     try {
+        const product = new product_1.default({
+            _id: new mongoose_1.default.Types.ObjectId(),
+            name: req.body.name,
+            price: +req.body.price,
+        });
         const prod = yield product.save();
         res.status(201).json(prod);
     }
