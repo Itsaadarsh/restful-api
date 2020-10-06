@@ -22,9 +22,9 @@ router.get('/', async (_req, res, _next) => {
 });
 
 router.post('/', async (req, res, _next) => {
-  const productID = await productModel.findById(req.body.prodId);
-  if (productID) {
-    try {
+  try {
+    const productID = await productModel.findById(req.body.prodId);
+    if (productID) {
       const order = new orderModel({
         _id: new mongoose.Types.ObjectId(),
         prodId: productID._id,
@@ -35,12 +35,12 @@ router.post('/', async (req, res, _next) => {
         msg: 'Order saved',
         order: savedOrder,
       });
-    } catch (err) {
-      console.log(err);
-      res.status(500).json({ message: err.message, error: err });
+    } else {
+      res.status(404).json({ message: 'Data not found' });
     }
-  } else {
-    res.status(404).json({ message: 'Data not found' });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: err.message, error: err });
   }
 });
 
@@ -60,11 +60,18 @@ router.get('/:orderID', async (req, res, _next) => {
 });
 
 router.delete('/:orderID', async (req, res, _next) => {
-  const orderID = req.params.orderID;
-  res.status(200).json({
-    msg: 'DELETE particular order',
-    id: orderID,
-  });
+  try {
+    const orderID = req.params.orderID;
+    const deleteOrder = await orderModel.deleteOne({ _id: orderID });
+    if (deleteOrder.n == 1) {
+      res.status(200).json({ message: `Order ${orderID} deleted successfully` });
+    } else {
+      res.status(404).json({ message: `Order not deleted` });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: err.message, error: err });
+  }
 });
 
 export default module.exports = router;

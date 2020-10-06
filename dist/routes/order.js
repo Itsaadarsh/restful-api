@@ -36,9 +36,9 @@ router.get('/', (_req, res, _next) => __awaiter(void 0, void 0, void 0, function
     }
 }));
 router.post('/', (req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
-    const productID = yield product_1.default.findById(req.body.prodId);
-    if (productID) {
-        try {
+    try {
+        const productID = yield product_1.default.findById(req.body.prodId);
+        if (productID) {
             const order = new orders_1.default({
                 _id: new mongoose_1.default.Types.ObjectId(),
                 prodId: productID._id,
@@ -50,13 +50,13 @@ router.post('/', (req, res, _next) => __awaiter(void 0, void 0, void 0, function
                 order: savedOrder,
             });
         }
-        catch (err) {
-            console.log(err);
-            res.status(500).json({ message: err.message, error: err });
+        else {
+            res.status(404).json({ message: 'Data not found' });
         }
     }
-    else {
-        res.status(404).json({ message: 'Data not found' });
+    catch (err) {
+        console.log(err);
+        res.status(500).json({ message: err.message, error: err });
     }
 }));
 router.get('/:orderID', (req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -76,11 +76,20 @@ router.get('/:orderID', (req, res, _next) => __awaiter(void 0, void 0, void 0, f
     }
 }));
 router.delete('/:orderID', (req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
-    const orderID = req.params.orderID;
-    res.status(200).json({
-        msg: 'DELETE particular order',
-        id: orderID,
-    });
+    try {
+        const orderID = req.params.orderID;
+        const deleteOrder = yield orders_1.default.deleteOne({ _id: orderID });
+        if (deleteOrder.n == 1) {
+            res.status(200).json({ message: `Order ${orderID} deleted successfully` });
+        }
+        else {
+            res.status(404).json({ message: `Order not deleted` });
+        }
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({ message: err.message, error: err });
+    }
 }));
 exports.default = module.exports = router;
 //# sourceMappingURL=order.js.map
