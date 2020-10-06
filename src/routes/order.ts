@@ -45,11 +45,18 @@ router.post('/', async (req, res, _next) => {
 });
 
 router.get('/:orderID', async (req, res, _next) => {
-  const orderID = req.params.orderID;
-  res.status(200).json({
-    msg: 'GET particular order',
-    id: orderID,
-  });
+  try {
+    const orderID = req.params.orderID;
+    const foundOrder = await orderModel.findById(orderID).select('prodId quantity _id');
+    if (foundOrder) {
+      res.status(200).json(foundOrder);
+    } else {
+      res.status(404).json({ message: 'No order found' });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: err.message, error: err });
+  }
 });
 
 router.delete('/:orderID', async (req, res, _next) => {

@@ -60,11 +60,20 @@ router.post('/', (req, res, _next) => __awaiter(void 0, void 0, void 0, function
     }
 }));
 router.get('/:orderID', (req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
-    const orderID = req.params.orderID;
-    res.status(200).json({
-        msg: 'GET particular order',
-        id: orderID,
-    });
+    try {
+        const orderID = req.params.orderID;
+        const foundOrder = yield orders_1.default.findById(orderID).select('prodId quantity _id');
+        if (foundOrder) {
+            res.status(200).json(foundOrder);
+        }
+        else {
+            res.status(404).json({ message: 'No order found' });
+        }
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({ message: err.message, error: err });
+    }
 }));
 router.delete('/:orderID', (req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
     const orderID = req.params.orderID;
