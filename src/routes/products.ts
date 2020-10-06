@@ -1,9 +1,31 @@
 import express from 'express';
-import Mongoose from 'mongoose';
 import productModel from '../models/product';
 const router = express.Router();
+import multer from 'multer';
 
-router.get('/', async (_req, res, _next) => {
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, 'public');
+//   },
+//   filename: function (req, file, cb) {
+//     const parts = file.mimetype.split('/');
+//     cb(null, Date.now() + file.originalname + '.' + parts);
+//   },
+// });
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './uploads/');
+  },
+  filename: function (req, file, cb) {
+    const now = new Date().toISOString();
+    const date = now.replace(/:/g, '-');
+    cb(null, date + file.originalname);
+  },
+});
+const upload = multer({ storage: storage });
+
+router.get('/', async (_req, res) => {
   try {
     const prod = await productModel.find().select('name price _id');
     if (prod.length == 0) {
@@ -20,22 +42,23 @@ router.get('/', async (_req, res, _next) => {
   }
 });
 
-router.post('/', async (req, res, _next) => {
-  try {
-    const product = new productModel({
-      _id: new Mongoose.Types.ObjectId(),
-      name: req.body.name,
-      price: +req.body.price,
-    });
-    const prod = await product.save();
-    res.status(201).json(prod);
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: err.message, error: err });
-  }
+router.post('/', upload.single('prodImage'), async (req, res) => {
+  res.sendFile(`${__dirname}/public/${req.file.filename}`);
+  // try {
+  //   const product = new productModel({
+  //     _id: new Mongoose.Types.ObjectId(),
+  //     name: req.body.name,
+  //     price: +req.body.price,
+  //   });
+  //   const prod = await product.save();
+  //   res.status(201).json(prod);
+  // } catch (err) {
+  //   console.log(err);
+  //   res.status(500).json({ message: err.message, error: err });
+  // }
 });
 
-router.get('/:prodId', async (req, res, _next) => {
+router.get('/:prodId', async (req, res) => {
   const prodID = req.params.prodId;
   try {
     const prod = await productModel.findById(prodID).select('name price _id');
@@ -50,7 +73,7 @@ router.get('/:prodId', async (req, res, _next) => {
   }
 });
 
-router.patch('/:prodId', async (req, res, _next) => {
+router.patch('/:prodId', async (req, res) => {
   const prodID = req.params.prodId;
   try {
     const updated: any = {};
@@ -69,7 +92,7 @@ router.patch('/:prodId', async (req, res, _next) => {
   }
 });
 
-router.delete('/:prodId', async (req, res, _next) => {
+router.delete('/:prodId', async (req, res) => {
   const prodID = req.params.prodId;
   try {
     const prod = await productModel.deleteOne({ _id: prodID });

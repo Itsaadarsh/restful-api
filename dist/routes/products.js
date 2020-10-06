@@ -13,10 +13,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const mongoose_1 = __importDefault(require("mongoose"));
 const product_1 = __importDefault(require("../models/product"));
 const router = express_1.default.Router();
-router.get('/', (_req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
+const multer_1 = __importDefault(require("multer"));
+const storage = multer_1.default.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './uploads/');
+    },
+    filename: function (req, file, cb) {
+        const now = new Date().toISOString();
+        const date = now.replace(/:/g, '-');
+        cb(null, date + file.originalname);
+    },
+});
+const upload = multer_1.default({ storage: storage });
+router.get('/', (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const prod = yield product_1.default.find().select('name price _id');
         if (prod.length == 0) {
@@ -34,22 +45,10 @@ router.get('/', (_req, res, _next) => __awaiter(void 0, void 0, void 0, function
         res.status(500).json({ message: err.message, error: err });
     }
 }));
-router.post('/', (req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const product = new product_1.default({
-            _id: new mongoose_1.default.Types.ObjectId(),
-            name: req.body.name,
-            price: +req.body.price,
-        });
-        const prod = yield product.save();
-        res.status(201).json(prod);
-    }
-    catch (err) {
-        console.log(err);
-        res.status(500).json({ message: err.message, error: err });
-    }
+router.post('/', upload.single('prodImage'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    res.sendFile(`${__dirname}/public/${req.file.filename}`);
 }));
-router.get('/:prodId', (req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
+router.get('/:prodId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const prodID = req.params.prodId;
     try {
         const prod = yield product_1.default.findById(prodID).select('name price _id');
@@ -65,7 +64,7 @@ router.get('/:prodId', (req, res, _next) => __awaiter(void 0, void 0, void 0, fu
         res.status(500).json({ message: err.message, error: err });
     }
 }));
-router.patch('/:prodId', (req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
+router.patch('/:prodId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const prodID = req.params.prodId;
     try {
         const updated = {};
@@ -84,7 +83,7 @@ router.patch('/:prodId', (req, res, _next) => __awaiter(void 0, void 0, void 0, 
         res.status(500).json({ message: err.message, error: err });
     }
 }));
-router.delete('/:prodId', (req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
+router.delete('/:prodId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const prodID = req.params.prodId;
     try {
         const prod = yield product_1.default.deleteOne({ _id: prodID });
