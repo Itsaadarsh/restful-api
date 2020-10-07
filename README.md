@@ -1,4 +1,4 @@
-# Restful API with NodeJS, Express and MongoDB
+# Restful API with NodeJS, Express.js and MongoDB
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/Itsaadarsh/nodeJS-express-postgreSQL/blob/master/LICENSE)
 ![GitHub repo size](https://img.shields.io/github/repo-size/Itsaadarsh/nodeJS-express-postgreSQL)
@@ -16,7 +16,7 @@ This project will run on **Express** server using **MongoDB** as database. Proje
 - JWT
 - Types Support
 - File Uploading
-- Passward Hashing (bcrypt)
+- Passward Hashing (bcrypt.js)
 - Middleware
 
 ## Dependencies
