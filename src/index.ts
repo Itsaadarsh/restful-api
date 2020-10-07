@@ -27,6 +27,8 @@ app.use((req: express.Request, res: express.Response, next: express.NextFunction
 app.use('/product', prodRouter);
 // Order route
 app.use('/orders', orderRouter);
+// Images route
+app.use('/images', express.static('images'));
 
 // Error handling
 app.use((_req, _res, next) => {

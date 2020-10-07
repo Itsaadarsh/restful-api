@@ -14,21 +14,34 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const product_1 = __importDefault(require("../models/product"));
-const router = express_1.default.Router();
 const multer_1 = __importDefault(require("multer"));
+const mongoose_1 = __importDefault(require("mongoose"));
+const router = express_1.default.Router();
 const storage = multer_1.default.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'public/');
+    destination: function (_req, _file, cb) {
+        cb(null, './images/');
     },
-    filename: function (req, file, cb) {
+    filename: function (_req, file, cb) {
         const parts = file.mimetype.split('/');
         cb(null, `${file.fieldname}-${Date.now()}.${parts[1]}`);
     },
 });
-const upload = multer_1.default({ storage });
+const upload = multer_1.default({
+    storage: storage,
+    limits: { fileSize: 1024 * 1024 * 5 },
+    fileFilter: (_req, file, cb) => {
+        const parts = file.mimetype.split('/');
+        if (parts[1] === 'jpeg' || parts[1] === 'png' || parts[1] === 'jpg') {
+            cb(null, true);
+        }
+        else {
+            cb(null, false);
+        }
+    },
+});
 router.get('/', (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const prod = yield product_1.default.find().select('name price _id');
+        const prod = yield product_1.default.find().select('name price imageUrl _id');
         if (prod.length == 0) {
             res.status(404).json({ message: 'data not found' });
         }
@@ -45,12 +58,25 @@ router.get('/', (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 }));
 router.post('/', upload.single('prodImage'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.sendFile(`${__dirname}/public/${req.file.filename}`);
+    try {
+        const product = new product_1.default({
+            _id: new mongoose_1.default.Types.ObjectId(),
+            name: req.body.name,
+            price: +req.body.price,
+            imageUrl: req.file.path,
+        });
+        const prod = yield product.save();
+        res.status(201).json(prod);
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({ message: err.message, error: err });
+    }
 }));
 router.get('/:prodId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const prodID = req.params.prodId;
     try {
-        const prod = yield product_1.default.findById(prodID).select('name price _id');
+        const prod = yield product_1.default.findById(prodID).select('name imageUrl price _id');
         if (prod) {
             res.status(200).json(prod);
         }

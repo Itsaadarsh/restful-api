@@ -34,6 +34,7 @@ app.use((req, res, next) => {
 });
 app.use('/product', products_1.default);
 app.use('/orders', order_1.default);
+app.use('/images', express_1.default.static('images'));
 app.use((_req, _res, next) => {
     const err = new Error();
     err.message = 'Not found';

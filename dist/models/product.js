@@ -8,6 +8,7 @@ const productSchema = new mongoose_1.default.Schema({
     _id: mongoose_1.default.Schema.Types.ObjectId,
     name: { type: mongoose_1.default.Schema.Types.String, required: true },
     price: { type: mongoose_1.default.Schema.Types.Number, required: true },
+    imageUrl: { type: mongoose_1.default.Schema.Types.String, required: true },
 });
 const productModel = mongoose_1.default.model('products', productSchema);
 exports.default = module.exports = productModel;
