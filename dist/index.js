@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const products_1 = __importDefault(require("./routes/products"));
 const order_1 = __importDefault(require("./routes/order"));
+const user_1 = __importDefault(require("./routes/user"));
 const morgan_1 = __importDefault(require("morgan"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const mongoose_1 = __importDefault(require("mongoose"));
@@ -35,6 +36,7 @@ app.use((req, res, next) => {
 app.use('/product', products_1.default);
 app.use('/orders', order_1.default);
 app.use('/images', express_1.default.static('images'));
+app.use('/user', user_1.default);
 app.use((_req, _res, next) => {
     const err = new Error();
     err.message = 'Not found';

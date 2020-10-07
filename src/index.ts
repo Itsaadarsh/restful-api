@@ -1,10 +1,10 @@
 import express from 'express';
 import prodRouter from './routes/products';
 import orderRouter from './routes/order';
+import userRouter from './routes/user';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
-
 const app = express();
 
 app.use(morgan('dev'));
@@ -29,6 +29,8 @@ app.use('/product', prodRouter);
 app.use('/orders', orderRouter);
 // Images route
 app.use('/images', express.static('images'));
+// User Route
+app.use('/user', userRouter);
 
 // Error handling
 app.use((_req, _res, next) => {
