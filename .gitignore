@@ -67,7 +67,7 @@ typings/
 nodemon.json
 # Yarn Integrity file
 .yarn-integrity
-
+images/
 # dotenv environment variables file
 .env
 .env.test
