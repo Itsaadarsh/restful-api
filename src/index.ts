@@ -33,15 +33,8 @@ app.use('/images', express.static('images'));
 app.use('/user', userRouter);
 
 // Error handling
-app.use((_req, _res, next) => {
-  const err: Error = new Error();
-  err.message = 'Not found';
-  err.status = 404;
-  next(err);
-});
-
-app.use((err: Error, _req: express.Request, res: express.Response) => {
-  res.status(err.status || 500);
+app.use((_req, res, _next) => {
+  const err: Error = new Error('Invalid route');
   res.json({
     error: {
       message: err.message,

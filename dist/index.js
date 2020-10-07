@@ -37,14 +37,8 @@ app.use('/product', products_1.default);
 app.use('/orders', order_1.default);
 app.use('/images', express_1.default.static('images'));
 app.use('/user', user_1.default);
-app.use((_req, _res, next) => {
-    const err = new Error();
-    err.message = 'Not found';
-    err.status = 404;
-    next(err);
-});
-app.use((err, _req, res) => {
-    res.status(err.status || 500);
+app.use((_req, res, _next) => {
+    const err = new Error('Invalid route');
     res.json({
         error: {
             message: err.message,
