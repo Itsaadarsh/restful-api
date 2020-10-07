@@ -28,6 +28,8 @@ router.post('/signup', (req, res) => __awaiter(void 0, void 0, void 0, function*
                         email: req.body.email,
                         passward: hash,
                     });
+                    req.user = hash;
+                    console.log(req.user);
                     const createdUser = yield user.save();
                     res.status(201).json(createdUser);
                 }
@@ -47,6 +49,7 @@ router.post('/signup', (req, res) => __awaiter(void 0, void 0, void 0, function*
 }));
 router.delete('/:userId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        console.log(req.user);
         const deletedUser = yield users_1.default.deleteOne({ _id: req.params.userId });
         if (deletedUser.n == 1) {
             res.status(200).json({ message: `USER ${req.params.userId} deleted successfully` });
