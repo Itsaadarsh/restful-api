@@ -14,6 +14,7 @@ This project will run on **Express** server using **MongoDB** as database. Proje
 - Server Side Validation
 - Sessionless Authentication (Tokens)
 - JWT
+- Protected Routes
 - Types Support
 - File Uploading
 - Passward Hashing (bcrypt.js)
