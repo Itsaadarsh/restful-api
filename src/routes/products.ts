@@ -6,6 +6,7 @@ import auth from '../auth/auth';
 
 const router = express.Router();
 
+// Image Uploading
 const storage = multer.diskStorage({
   destination: function (_req, _file, cb) {
     cb(null, './images/');
@@ -55,7 +56,6 @@ router.post('/', auth, upload.single('prodImage'), async (req: express.Request, 
       imageUrl: req.file.path,
     });
     const prod = await product.save();
-    console.log(req.user);
     res.status(201).json(prod);
   } catch (err) {
     console.log(err);

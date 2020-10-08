@@ -67,7 +67,6 @@ router.post('/', auth_1.default, upload.single('prodImage'), (req, res) => __awa
             imageUrl: req.file.path,
         });
         const prod = yield product.save();
-        console.log(req.user);
         res.status(201).json(prod);
     }
     catch (err) {

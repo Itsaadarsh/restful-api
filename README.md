@@ -24,6 +24,7 @@ This project will run on **Express** server using **MongoDB** as database. Proje
 - bcrypt
 - body-parser
 - express
+- jsonwebtoken
 - mongoose
 - morgan
 - multer
@@ -32,6 +33,7 @@ This project will run on **Express** server using **MongoDB** as database. Proje
 ## Dev Dependencies
 
 - @types/express
+- @types/jsonwebtoken
 - @types/mongoose
 - @types/morgan
 - @types/bcrypt
@@ -46,6 +48,16 @@ This project will run on **Express** server using **MongoDB** as database. Proje
 ```
 yarn install
 yarn start
+```
+
+```
+Make sure to also add your Mongo Atlas Admin Passward and you JWT Token Secret Key to a nodemon.json file (which you have to create).
+{
+    "env": {
+        "MONGO_PWD": "YOUR_MONGO_PWD",
+        "JWT_TOKEN": "YOUR_SECRET_KEY"
+    }
+}
 ```
 
 Press `CTRL + C` to stop the process.

@@ -7,6 +7,7 @@ import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 const app = express();
 
+// Adding user globally to express.Request
 declare global {
   namespace Express {
     interface Request {
