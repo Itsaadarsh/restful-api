@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import orderModel from '../models/orders';
 import productModel from '../models/product';
 import auth from '../auth/auth';
+
 const router = express.Router();
 
 router.get('/', auth, async (_req, res) => {
