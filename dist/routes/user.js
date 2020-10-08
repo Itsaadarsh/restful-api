@@ -16,23 +16,8 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const express_1 = __importDefault(require("express"));
 const users_1 = __importDefault(require("../models/users"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const router = express_1.default.Router();
-router.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield users_1.default.findOne({ email: req.body.email });
-    if (user === null) {
-        res.status(404).json({ message: `No user found with this email id ${req.body.email}` });
-    }
-    else {
-        bcrypt_1.default.compare(req.body.passward, user.passward, (err, pass) => {
-            if (err || pass == false) {
-                res.status(401).json({ message: 'Auth failed' });
-            }
-            else {
-                res.status(200).json({ message: 'Login successful' });
-            }
-        });
-    }
-}));
 router.post('/signup', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield users_1.default.find({ email: req.body.email });
     if (user.length == 0) {
@@ -59,6 +44,30 @@ router.post('/signup', (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
     else {
         res.status(409).json({ message: 'This email already exists' });
+    }
+}));
+router.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const user = yield users_1.default.findOne({ email: req.body.email });
+        if (user === null) {
+            res.status(404).json({ message: `No user found with this email id ${req.body.email}` });
+        }
+        else {
+            bcrypt_1.default.compare(req.body.passward, user.passward, (err, pass) => {
+                if (err || pass == false) {
+                    res.status(401).json({ message: 'Auth failed' });
+                }
+                else {
+                    const token = jsonwebtoken_1.default.sign({ email: user.email, userid: user._id }, process.env.JWT_TOKEN, {
+                        expiresIn: '1h',
+                    });
+                    res.status(200).json({ message: 'Login successful', token: token });
+                }
+            });
+        }
+    }
+    catch (err) {
+        res.status(500).json({ message: err.message, error: err });
     }
 }));
 router.delete('/:userId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {

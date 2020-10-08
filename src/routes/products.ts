@@ -2,6 +2,8 @@ import express from 'express';
 import productModel from '../models/product';
 import multer from 'multer';
 import mongoose from 'mongoose';
+import auth from '../auth/auth';
+
 const router = express.Router();
 
 const storage = multer.diskStorage({
@@ -44,15 +46,16 @@ router.get('/', async (_req, res) => {
   }
 });
 
-router.post('/', upload.single('prodImage'), async (req, res) => {
+router.post('/', auth, upload.single('prodImage'), async (req: express.Request, res) => {
   try {
     const product = new productModel({
       _id: new mongoose.Types.ObjectId(),
       name: req.body.name,
-      price: +req.body.price,
+      price: req.body.price,
       imageUrl: req.file.path,
     });
     const prod = await product.save();
+    console.log(req.user);
     res.status(201).json(prod);
   } catch (err) {
     console.log(err);
@@ -60,7 +63,7 @@ router.post('/', upload.single('prodImage'), async (req, res) => {
   }
 });
 
-router.get('/:prodId', async (req, res) => {
+router.get('/:prodId', auth, async (req, res) => {
   const prodID = req.params.prodId;
   try {
     const prod = await productModel.findById(prodID).select('name imageUrl price _id');
@@ -75,7 +78,7 @@ router.get('/:prodId', async (req, res) => {
   }
 });
 
-router.patch('/:prodId', async (req, res) => {
+router.patch('/:prodId', auth, async (req, res) => {
   const prodID = req.params.prodId;
   try {
     const updated: any = {};
@@ -94,7 +97,7 @@ router.patch('/:prodId', async (req, res) => {
   }
 });
 
-router.delete('/:prodId', async (req, res) => {
+router.delete('/:prodId', auth, async (req, res) => {
   const prodID = req.params.prodId;
   try {
     const prod = await productModel.deleteOne({ _id: prodID });

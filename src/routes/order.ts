@@ -2,9 +2,10 @@ import express from 'express';
 import mongoose from 'mongoose';
 import orderModel from '../models/orders';
 import productModel from '../models/product';
+import auth from '../auth/auth';
 const router = express.Router();
 
-router.get('/', async (_req, res) => {
+router.get('/', auth, async (_req, res) => {
   try {
     const getOrder = await orderModel.find().select('_id quantity product').populate('product', 'name');
     if (getOrder.length == 0) {
@@ -21,7 +22,7 @@ router.get('/', async (_req, res) => {
   }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
   try {
     const productID = await productModel.findById(req.body.product);
     if (productID) {
@@ -44,7 +45,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.get('/:orderID', async (req, res) => {
+router.get('/:orderID', auth, async (req, res) => {
   try {
     const orderID = req.params.orderID;
     const foundOrder = await orderModel.findById(orderID).select('prodId quantity _id').populate('product');
@@ -59,7 +60,7 @@ router.get('/:orderID', async (req, res) => {
   }
 });
 
-router.delete('/:orderID', async (req, res) => {
+router.delete('/:orderID', auth, async (req, res) => {
   try {
     const orderID = req.params.orderID;
     const deleteOrder = await orderModel.deleteOne({ _id: orderID });

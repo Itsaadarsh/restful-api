@@ -16,8 +16,9 @@ const express_1 = __importDefault(require("express"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const orders_1 = __importDefault(require("../models/orders"));
 const product_1 = __importDefault(require("../models/product"));
+const auth_1 = __importDefault(require("../auth/auth"));
 const router = express_1.default.Router();
-router.get('/', (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get('/', auth_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const getOrder = yield orders_1.default.find().select('_id quantity product').populate('product', 'name');
         if (getOrder.length == 0) {
@@ -35,7 +36,7 @@ router.get('/', (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(500).json({ message: err.message, error: err });
     }
 }));
-router.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post('/', auth_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const productID = yield product_1.default.findById(req.body.product);
         if (productID) {
@@ -59,7 +60,7 @@ router.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(500).json({ message: err.message, error: err });
     }
 }));
-router.get('/:orderID', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get('/:orderID', auth_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const orderID = req.params.orderID;
         const foundOrder = yield orders_1.default.findById(orderID).select('prodId quantity _id').populate('product');
@@ -75,7 +76,7 @@ router.get('/:orderID', (req, res) => __awaiter(void 0, void 0, void 0, function
         res.status(500).json({ message: err.message, error: err });
     }
 }));
-router.delete('/:orderID', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.delete('/:orderID', auth_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const orderID = req.params.orderID;
         const deleteOrder = yield orders_1.default.deleteOne({ _id: orderID });

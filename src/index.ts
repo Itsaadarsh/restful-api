@@ -7,6 +7,13 @@ import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 const app = express();
 
+declare global {
+  namespace Express {
+    interface Request {
+      user: string | object;
+    }
+  }
+}
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
