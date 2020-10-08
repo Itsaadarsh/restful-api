@@ -17,6 +17,22 @@ const express_1 = __importDefault(require("express"));
 const users_1 = __importDefault(require("../models/users"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const router = express_1.default.Router();
+router.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield users_1.default.findOne({ email: req.body.email });
+    if (user === null) {
+        res.status(404).json({ message: `No user found with this email id ${req.body.email}` });
+    }
+    else {
+        bcrypt_1.default.compare(req.body.passward, user.passward, (err, pass) => {
+            if (err || pass == false) {
+                res.status(401).json({ message: 'Auth failed' });
+            }
+            else {
+                res.status(200).json({ message: 'Login successful' });
+            }
+        });
+    }
+}));
 router.post('/signup', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield users_1.default.find({ email: req.body.email });
     if (user.length == 0) {
@@ -28,8 +44,6 @@ router.post('/signup', (req, res) => __awaiter(void 0, void 0, void 0, function*
                         email: req.body.email,
                         passward: hash,
                     });
-                    req.user = hash;
-                    console.log(req.user);
                     const createdUser = yield user.save();
                     res.status(201).json(createdUser);
                 }
@@ -49,7 +63,6 @@ router.post('/signup', (req, res) => __awaiter(void 0, void 0, void 0, function*
 }));
 router.delete('/:userId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log(req.user);
         const deletedUser = yield users_1.default.deleteOne({ _id: req.params.userId });
         if (deletedUser.n == 1) {
             res.status(200).json({ message: `USER ${req.params.userId} deleted successfully` });

@@ -11,6 +11,12 @@ const userSchema = new mongoose.Schema({
   passward: { type: mongoose.Schema.Types.String, required: true },
 });
 
-const userModel = mongoose.model('users', userSchema);
+interface USER extends mongoose.Document {
+  _id: string;
+  email: string;
+  passward: string;
+}
+
+const userModel = mongoose.model<USER>('users', userSchema);
 
 export default module.exports = userModel;

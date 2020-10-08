@@ -4,6 +4,21 @@ import userModel from '../models/users';
 import bcrypt from 'bcrypt';
 const router = express.Router();
 
+router.post('/login', async (req, res) => {
+  const user = await userModel.findOne({ email: req.body.email });
+  if (user === null) {
+    res.status(404).json({ message: `No user found with this email id ${req.body.email}` });
+  } else {
+    bcrypt.compare(req.body.passward, user.passward, (err, pass) => {
+      if (err || pass == false) {
+        res.status(401).json({ message: 'Auth failed' });
+      } else {
+        res.status(200).json({ message: 'Login successful' });
+      }
+    });
+  }
+});
+
 router.post('/signup', async (req, res) => {
   const user = await userModel.find({ email: req.body.email });
   if (user.length == 0) {
